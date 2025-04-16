@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор баннеров</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .banner {
+            width: 1920px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: white;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .banner-1 {
+            background: linear-gradient(45deg, #9ACD32, #556B2F);
+        }
+        .banner-2 {
+            background: linear-gradient(45deg, #8B0000, #CD5C5C);
+        }
+        .banner-3 {
+            background: linear-gradient(45deg, #483D8B, #6A5ACD);
+        }
+        .banner-default {
+            background: linear-gradient(45deg, #556B2F, #8FBC8F);
+        }
+        h1 {
+            font-size: 72px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        p {
+            font-size: 32px;
+            max-width: 800px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Баннер 1 -->
+    <div class="banner banner-1">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Работа в лучших ресторанах</h1>
+            <p>Вакансии от премиальных заведений с высокой оплатой</p>
+        </div>
+    </div>
+
+    <!-- Баннер 2 -->
+    <div class="banner banner-2">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Ищем шеф-поваров</h1>
+            <p>Особые условия для профессионалов высокого класса</p>
+        </div>
+    </div>
+
+    <!-- Баннер 3 -->
+    <div class="banner banner-3">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Разместите вакансию бесплатно</h1>
+            <p>Специальное предложение для работодателей до конца месяца</p>
+        </div>
+    </div>
+
+    <!-- Дефолтный баннер -->
+    <div class="banner banner-default">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>HoReCa PitStop - найди работу мечты</h1>
+            <p>Лучшие вакансии в сфере гостеприимства</p>
+        </div>
+    </div>
+</body>
+</html> 

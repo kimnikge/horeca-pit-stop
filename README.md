@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HoReCa Pit Stop
 
-## Getting Started
+Платформа для поиска работы в сфере HoReCa (отели, рестораны, кафе).
 
-First, run the development server:
+## Обзор проекта
 
+HoReCa Pit Stop — это специализированная платформа для соискателей и работодателей в индустрии гостеприимства. Проект позволяет:
+- Размещать и искать вакансии в сфере HoReCa
+- Создавать профили соискателей и работодателей
+- Управлять откликами на вакансии
+- Получать уведомления о новых вакансиях и откликах
+
+## Технический стек
+
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS + Shadcn UI
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Дополнительно**: React Hook Form, Zod для валидации, Lucide иконки
+
+## Установка и запуск
+
+1. Клонировать репозиторий:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/horeca-pit-stop.git
+cd horeca-pit-stop
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Установить зависимости:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Создать файл `.env.local` на основе `.env.example`:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Указать переменные окружения Supabase в файле `.env.local`
 
-## Learn More
+5. Запустить проект локально:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Открыть проект в браузере: [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Структура базы данных
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Проект использует Supabase в качестве бэкэнда. Основные таблицы:
+- `profiles` - профили пользователей (соискатели, работодатели)
+- `jobs` - объявления о вакансиях
+- `applications` - отклики на вакансии
+- `messages` - сообщения между соискателями и работодателями
+- `notifications` - уведомления для пользователей
 
-## Deploy on Vercel
+## Деплой
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Подготовка к деплою
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Создать проект на Supabase и получить API ключи
+2. Обновить переменные окружения в настройках хостинга
+3. Запустить миграции из директории `supabase/migrations`
+
+### Деплой на Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Fhoreca-pit-stop)
+
+## Лицензия
+
+[MIT](LICENSE)
