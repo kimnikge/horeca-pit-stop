@@ -9,6 +9,8 @@ import { updateBannerStatus } from "@/services/banner-service"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CheckCircle, XCircle, Clock, Calendar, Link as LinkIcon, Eye, EyeOff, Edit, Trash2, Plus, X, ArrowUp, ArrowDown } from "lucide-react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
@@ -223,7 +225,13 @@ export default function AdminBannersPage() {
         description: `Баннер ${!currentStatus ? "активирован" : "деактивирован"}`,
       });
       
-      fetchBanners();
+      // Обновляем список баннеров локально
+      const updatedBanners = banners.map(banner => 
+        banner.id === id ? { ...banner, is_active: !currentStatus } : banner
+      );
+      
+      setBanners(updatedBanners);
+      filterBannersByTab(updatedBanners, activeTab);
     } catch (error: any) {
       toast({
         title: "Ошибка",
@@ -249,7 +257,10 @@ export default function AdminBannersPage() {
         description: "Баннер удален",
       });
       
-      fetchBanners();
+      // Удаляем баннер из локального состояния
+      const updatedBanners = banners.filter(banner => banner.id !== id);
+      setBanners(updatedBanners);
+      filterBannersByTab(updatedBanners, activeTab);
     } catch (error: any) {
       toast({
         title: "Ошибка",
@@ -270,11 +281,22 @@ export default function AdminBannersPage() {
 
       if (error) throw error;
       
-      fetchBanners();
+      toast({
+        title: "Успех",
+        description: "Приоритет баннера обновлен",
+      });
+      
+      // Обновляем список баннеров локально
+      const updatedBanners = banners.map(banner => 
+        banner.id === id ? { ...banner, priority: newPriority } : banner
+      );
+      
+      setBanners(updatedBanners);
+      filterBannersByTab(updatedBanners, activeTab);
     } catch (error: any) {
       toast({
         title: "Ошибка",
-        description: error.message || "Не удалось изменить приоритет",
+        description: error.message || "Не удалось обновить приоритет баннера",
         variant: "destructive"
       });
     }
@@ -291,27 +313,37 @@ export default function AdminBannersPage() {
         return;
       }
 
-      const { error } = await supabase
+      // Рассчитываем дату окончания, если она не указана
+      const expiresAt = newBanner.expires_at 
+        ? new Date(newBanner.expires_at) 
+        : new Date(new Date().setDate(new Date().getDate() + 30)); // 30 дней по умолчанию
+
+      // Создаем новый баннер
+      const { data, error } = await supabase
         .from("banners")
         .insert({
           title: newBanner.title,
-          description: newBanner.description || null,
+          description: newBanner.description,
           image_url: newBanner.image_url,
-          link: newBanner.link || null,
+          link: newBanner.link || "/",
+          status: "active",
+          user_id: user?.id,
+          expires_at: expiresAt.toISOString(),
           priority: newBanner.priority,
           is_active: newBanner.is_active,
-          starts_at: newBanner.starts_at,
-          expires_at: newBanner.expires_at || null
-        });
+          starts_at: new Date(newBanner.starts_at).toISOString()
+        })
+        .select()
+        .single();
 
       if (error) throw error;
       
       toast({
         title: "Успех",
-        description: "Баннер добавлен",
+        description: "Баннер успешно добавлен",
       });
       
-      setIsAdding(false);
+      // Сбрасываем форму
       setNewBanner({
         title: "",
         description: "",
@@ -323,7 +355,75 @@ export default function AdminBannersPage() {
         expires_at: ""
       });
       
-      fetchBanners();
+      setIsAdding(false);
+      
+      // Добавляем новый баннер в локальное состояние
+      if (data) {
+        const newBannerData = {
+          ...data,
+          user_name: "Вы",
+          user_email: user?.email || "",
+          status: "active" as BannerStatus
+        };
+        
+        const updatedBanners = [...banners, newBannerData];
+        setBanners(updatedBanners);
+        filterBannersByTab(updatedBanners, activeTab);
+      } else {
+        // Если данные не вернулись, делаем полную перезагрузку с сервера
+        // Создаем заново асинхронную функцию для загрузки баннеров
+        const loadBanners = async () => {
+          try {
+            setLoading(true);
+            // Получаем баннеры
+            const { data: bannersData, error: bannersError } = await supabase
+              .from("banners")
+              .select("*")
+              .order("priority", { ascending: false })
+              .order("created_at", { ascending: false });
+
+            if (bannersError) throw bannersError;
+
+            if (!bannersData || bannersData.length === 0) {
+              setBanners([]);
+              setFilteredBanners([]);
+              setLoading(false);
+              return;
+            }
+
+            // Получаем информацию о пользователях
+            const userIds = [...new Set(bannersData.map(banner => banner.user_id))];
+            const { data: usersData, error: usersError } = await supabase
+              .from("profiles")
+              .select("id, name, email")
+              .in("id", userIds);
+
+            if (usersError) throw usersError;
+
+            // Добавляем имена пользователей к баннерам
+            const bannersWithUsers = bannersData.map(banner => {
+              const user = usersData?.find(u => u.id === banner.user_id);
+              return {
+                ...banner,
+                user_name: user?.name || "Неизвестный",
+                user_email: user?.email || "Нет email",
+                status: banner.status as BannerStatus
+              };
+            }) as Banner[];
+
+            setBanners(bannersWithUsers);
+            // Фильтруем баннеры по активной вкладке
+            filterBannersByTab(bannersWithUsers, activeTab);
+          } catch (error) {
+            console.error("Ошибка при загрузке баннеров:", error);
+            setError("Не удалось загрузить список баннеров");
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        loadBanners();
+      }
     } catch (error: any) {
       toast({
         title: "Ошибка",
