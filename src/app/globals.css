@@ -71,9 +71,11 @@
   h1, h2, h3 {
     @apply font-bold tracking-tight;
   }
+
   h1 {
     @apply text-3xl sm:text-4xl md:text-5xl;
   }
+
   h2 {
     @apply text-2xl sm:text-3xl;
   }
@@ -99,7 +101,7 @@
 /* Отображение краев соседних баннеров */
 .banner-carousel-container::before,
 .banner-carousel-container::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   width: 5%;
@@ -110,12 +112,12 @@
 
 .banner-carousel-container::before {
   left: 0;
-  background: linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0));
+  background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
 .banner-carousel-container::after {
   right: 0;
-  background: linear-gradient(to left, rgba(255,255,255,1), rgba(255,255,255,0));
+  background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
 /* Добавленные стили для адаптивности */
@@ -127,7 +129,7 @@
 }
 
 .text-shadow {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); 
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 /* Исправление отображения на мобильных устройствах */
