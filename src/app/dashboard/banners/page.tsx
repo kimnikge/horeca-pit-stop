@@ -104,8 +104,12 @@ export default function BannersPage() {
       if (!success) throw new Error(error)
       
       // Обновляем список баннеров
-      const updatedBanners = await getUserBanners(user.id)
-      setBanners(updatedBanners)
+      if (user) {
+        const updatedBanners = await getUserBanners(user.id)
+        setBanners(updatedBanners)
+      } else {
+        throw new Error("Пользователь не авторизован")
+      }
     } catch (err) {
       console.error("Ошибка при повторной активации баннера:", err)
       setError(err instanceof Error ? err.message : "Не удалось активировать баннер")
